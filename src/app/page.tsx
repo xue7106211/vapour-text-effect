@@ -1,4 +1,5 @@
 import { Component as VapourTextDemo } from "@/components/ui/vapour-text-effect";
+import { memo } from "react";
 
 export default function Home() {
   return (
@@ -7,3 +8,8 @@ export default function Home() {
     </div>
   );
 }
+
+const SeoElement = memo(({ tag = Tag.P, texts }: { tag: Tag, texts: string[] }) => {
+  // ...
+});
+SeoElement.displayName = "SeoElement";

@@ -112,7 +112,6 @@ export default function VaporizeTextCycle({
   const vaporizeProgressRef = useRef(0);
   const fadeOpacityRef = useRef(0);
   const [wrapperSize, setWrapperSize] = useState({ width: 0, height: 0 });
-  const transformedDensity = transformValue(density, [0, 10], [0.3, 1], true);
 
   // Calculate device pixel ratio
   const globalDpr = useMemo(() => {
@@ -164,9 +163,9 @@ export default function VaporizeTextCycle({
       fontConfig.MULTIPLIED_VAPORIZE_SPREAD,
       animationDurations.VAPORIZE_DURATION,
       direction,
-      transformedDensity
+      density
     );
-  }, [fontConfig.MULTIPLIED_VAPORIZE_SPREAD, animationDurations.VAPORIZE_DURATION, direction, transformedDensity]);
+  }, [fontConfig.MULTIPLIED_VAPORIZE_SPREAD, animationDurations.VAPORIZE_DURATION, direction, density]);
 
   // Memoize render function
   const memoizedRenderParticles = useCallback((ctx: CanvasRenderingContext2D, particles: Particle[]) => {
@@ -311,7 +310,7 @@ export default function VaporizeTextCycle({
       particlesRef,
       globalDpr,
       currentTextIndex,
-      transformedDensity,
+      density,
     });
 
     const currentFont = font.fontFamily || "sans-serif";
@@ -323,7 +322,7 @@ export default function VaporizeTextCycle({
       particlesRef,
       globalDpr,
       currentTextIndex,
-      transformedDensity,
+      density,
       framerProps: {
         texts,
         font,
@@ -331,7 +330,7 @@ export default function VaporizeTextCycle({
         alignment,
       },
     });
-  }, [texts, font, color, alignment, wrapperSize, currentTextIndex, globalDpr, transformedDensity]);
+  }, [texts, font, color, alignment, wrapperSize, currentTextIndex, globalDpr, density]);
 
   // Handle resize
   useEffect(() => {
@@ -343,7 +342,6 @@ export default function VaporizeTextCycle({
         const { width, height } = entry.contentRect;
         setWrapperSize({ width, height });
       }
-      
       renderCanvas({
         framerProps: {
           texts,
@@ -356,7 +354,7 @@ export default function VaporizeTextCycle({
         particlesRef,
         globalDpr,
         currentTextIndex,
-        transformedDensity,
+        density,
       });
     });
 
@@ -364,7 +362,7 @@ export default function VaporizeTextCycle({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [wrapperRef.current]);
+  }, [texts, font, color, alignment, globalDpr, currentTextIndex, density]);
 
   // Initial size detection
   useEffect(() => {
@@ -403,6 +401,7 @@ const SeoElement = memo(({ tag = Tag.P, texts }: { tag: Tag, texts: string[] }) 
   
   return createElement(safeTag, { style }, texts?.join(" ") ?? "");
 });
+SeoElement.displayName = "SeoElement";
 
 // ------------------------------------------------------------ //
 // FONT HANDLING
@@ -415,7 +414,7 @@ const handleFontChange = ({
   particlesRef,
   globalDpr,
   currentTextIndex,
-  transformedDensity,
+  density,
   framerProps,
 }: {
   currentFont: string;
@@ -425,7 +424,7 @@ const handleFontChange = ({
   particlesRef: React.MutableRefObject<Particle[]>;
   globalDpr: number;
   currentTextIndex: number;
-  transformedDensity: number;
+  density: number;
   framerProps: VaporizeTextCycleProps;
 }) => {
   if (currentFont !== lastFontRef.current) {
@@ -441,7 +440,7 @@ const handleFontChange = ({
         particlesRef,
         globalDpr,
         currentTextIndex,
-        transformedDensity,
+        density,
       });
     }, 1000);
     
@@ -482,7 +481,7 @@ const renderCanvas = ({
   particlesRef,
   globalDpr,
   currentTextIndex,
-  transformedDensity,
+  density,
 }: {
   framerProps: VaporizeTextCycleProps;
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -490,7 +489,7 @@ const renderCanvas = ({
   particlesRef: React.MutableRefObject<Particle[]>;
   globalDpr: number;
   currentTextIndex: number;
-  transformedDensity: number;
+  density: number;
 }) => {
   const canvas = canvasRef.current;
   if (!canvas || !wrapperSize.width || !wrapperSize.height) return;
@@ -559,11 +558,11 @@ const createParticles = (
   ctx.imageSmoothingEnabled = true;
   
   if ('fontKerning' in ctx) {
-    (ctx as any).fontKerning = "normal";
+    (ctx as CanvasRenderingContext2D & { fontKerning?: string }).fontKerning = "normal";
   }
   
   if ('textRendering' in ctx) {
-    (ctx as any).textRendering = "geometricPrecision";
+    (ctx as CanvasRenderingContext2D & { textRendering?: string }).textRendering = "geometricPrecision";
   }
 
   // Calculate text boundaries
@@ -805,27 +804,6 @@ const parseColor = (color: string) => {
   console.warn("Could not parse color:", color);
   return "rgba(0, 0, 0, 1)";
 };
-
-/**
- * Maps a value from one range to another, optionally clamping the result.
- */
-function transformValue(input: number, inputRange: number[], outputRange: number[], clamp = false): number {
-  const [inputMin, inputMax] = inputRange;
-  const [outputMin, outputMax] = outputRange;
-  
-  const progress = (input - inputMin) / (inputMax - inputMin);
-  let result = outputMin + progress * (outputMax - outputMin);
-  
-  if (clamp) {
-    if (outputMax > outputMin) {
-      result = Math.min(Math.max(result, outputMin), outputMax);
-    } else {
-      result = Math.min(Math.max(result, outputMax), outputMin);
-    }
-  }
-  
-  return result;
-}
 
 /**
  * Custom hook to check if an element is in the viewport
