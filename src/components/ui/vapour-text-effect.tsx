@@ -784,11 +784,11 @@ const parseColor = (color: string) => {
   
   if (rgbaMatch) {
     // If RGBA format
-    const [_, r, g, b, a] = rgbaMatch;
+    const [, r, g, b, a] = rgbaMatch;
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   } else if (rgbMatch) {
     // If RGB format
-    const [_, r, g, b] = rgbMatch;
+    const [, r, g, b] = rgbMatch;
     return `rgba(${r}, ${g}, ${b}, 1)`;
   }
   
