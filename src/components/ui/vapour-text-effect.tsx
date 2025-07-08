@@ -310,7 +310,6 @@ export default function VaporizeTextCycle({
       particlesRef,
       globalDpr,
       currentTextIndex,
-      density,
     });
 
     const currentFont = font.fontFamily || "sans-serif";
@@ -322,7 +321,6 @@ export default function VaporizeTextCycle({
       particlesRef,
       globalDpr,
       currentTextIndex,
-      density,
       framerProps: {
         texts,
         font,
@@ -330,7 +328,7 @@ export default function VaporizeTextCycle({
         alignment,
       },
     });
-  }, [texts, font, color, alignment, wrapperSize, currentTextIndex, globalDpr, density]);
+  }, [texts, font, color, alignment, wrapperSize, currentTextIndex, globalDpr]);
 
   // Handle resize
   useEffect(() => {
@@ -354,7 +352,6 @@ export default function VaporizeTextCycle({
         particlesRef,
         globalDpr,
         currentTextIndex,
-        density,
       });
     });
 
@@ -362,7 +359,7 @@ export default function VaporizeTextCycle({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [texts, font, color, alignment, globalDpr, currentTextIndex, density]);
+  }, [texts, font, color, alignment, globalDpr, currentTextIndex]);
 
   // Initial size detection
   useEffect(() => {
@@ -414,7 +411,6 @@ const handleFontChange = ({
   particlesRef,
   globalDpr,
   currentTextIndex,
-  density,
   framerProps,
 }: {
   currentFont: string;
@@ -424,7 +420,6 @@ const handleFontChange = ({
   particlesRef: React.MutableRefObject<Particle[]>;
   globalDpr: number;
   currentTextIndex: number;
-  density: number;
   framerProps: VaporizeTextCycleProps;
 }) => {
   if (currentFont !== lastFontRef.current) {
@@ -440,7 +435,6 @@ const handleFontChange = ({
         particlesRef,
         globalDpr,
         currentTextIndex,
-        density,
       });
     }, 1000);
     
@@ -481,7 +475,6 @@ const renderCanvas = ({
   particlesRef,
   globalDpr,
   currentTextIndex,
-  density,
 }: {
   framerProps: VaporizeTextCycleProps;
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -489,7 +482,6 @@ const renderCanvas = ({
   particlesRef: React.MutableRefObject<Particle[]>;
   globalDpr: number;
   currentTextIndex: number;
-  density: number;
 }) => {
   const canvas = canvasRef.current;
   if (!canvas || !wrapperSize.width || !wrapperSize.height) return;
