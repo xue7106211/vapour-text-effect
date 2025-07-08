@@ -8,15 +8,15 @@ export const Component = () => {
             <VaporizeTextCycle
                 texts={["Lark Design System", "Allen Xue", "1994 12 16"]}
                 font={{
-                    fontFamily: "Inter, sans-serif",
-                    fontSize: "70px",
-                    fontWeight: 600
+                    fontFamily: "Bricolage Grotesque, Inter, sans-serif",
+                    fontSize: "100px",
+                    fontWeight: 400
                 }}
                 color="rgb(255,255, 255)"
-                spread={5}
+                spread={8}
                 density={5}
                 animation={{
-                    vaporizeDuration: 2,
+                    vaporizeDuration: 4,
                     fadeInDuration: 1,
                     waitDuration: 0.5
                 }}
