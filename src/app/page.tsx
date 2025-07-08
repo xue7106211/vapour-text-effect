@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Component as VapourTextDemo } from "@/components/ui/vapour-text-effect";
 
 export default function Home() {
